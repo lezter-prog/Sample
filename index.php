@@ -133,8 +133,11 @@ var visitorslistTbl = $('#dailyactivitytbl').DataTable({
         'copy', 'excel', 'pdf'
     ],
 ajax:{
-    url:"function/activitydatafuntion.php",
-    type:'get'
+    url:"mediator/indexmediator.php",
+    type:'POST',
+    data: function(d){
+      d.action="getdata"
+    }
 },
 columns: [
     { defaultContent: "Lezter "},
@@ -157,7 +160,7 @@ $(document).ready(function(){
     autoclose: true,  
     forceParse: false,
     todayHighlight: true,
-    format: 'mm/dd/yyyy',
+    format: 'yyyy/mm/dd',
     endDate: 'today'
 }).datepicker('setDate',new Date())
 });
@@ -168,19 +171,22 @@ $('.save-btn').click(function(){
     var date =inputvalidation('dateofActivity');
 
     if(title && activities && date){
-      console.log($('#activity').val());
+      console.log($('#dateofActivity').val());
       $.ajax({
         type:"POST",
-        url:"function/insertactivitiesfunction.php",
+        url:"mediator/indexmediator.php",
         data:{
+            action:"insertdata",
             title:$('#title').val(),
             activity:$('#activity').val(),
             date:$('#dateofActivity').val()
         },
         success:function(data){
-          console.log(data);
-          if(data){
-            alert('success');
+          data=JSON.parse(data)
+          console.log(data.status);
+          if(data.status == true){
+            alert('success'); 
+            location.reload();
           }else{
             alert(data);
 
